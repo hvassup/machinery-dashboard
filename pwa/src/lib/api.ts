@@ -1,6 +1,9 @@
 import type { Machine, MachineDetail } from "@/types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8081";
+const API_URL =
+  typeof window === "undefined"
+    ? (process.env.INTERNAL_API_URL ?? "http://localhost:8081")
+    : "/api-proxy";
 
 export async function getMachines(): Promise<Machine[]> {
   const res = await fetch(`${API_URL}/machines`, { cache: "no-store" });

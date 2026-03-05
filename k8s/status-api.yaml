@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: status-api
+  namespace: machinery-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: status-api
+  template:
+    metadata:
+      labels:
+        app: status-api
+    spec:
+      containers:
+        - name: status-api
+          image: 130585887042.dkr.ecr.us-west-2.amazonaws.com/status-api:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:8081
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Production
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: RABBITMQ_USER
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: RABBITMQ_PASS
+            - name: ConnectionStrings__Default
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: ConnectionStrings__Default
+            - name: Vapid__Subject
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: VAPID_SUBJECT
+            - name: Vapid__PublicKey
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: VAPID_PUBLIC_KEY
+            - name: Vapid__PrivateKey
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: VAPID_PRIVATE_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: status-api
+  namespace: machinery-dashboard
+spec:
+  type: LoadBalancer
+  selector:
+    app: status-api
+  ports:
+    - port: 80
+      targetPort: 8081

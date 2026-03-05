@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: equipment-01
+  namespace: machinery-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: equipment-01
+  template:
+    metadata:
+      labels:
+        app: equipment-01
+    spec:
+      containers:
+        - name: equipment-service
+          image: 130585887042.dkr.ecr.us-west-2.amazonaws.com/equipment-service:latest
+          env:
+            - name: EQUIPMENT_ID
+              value: machine-01
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: RABBITMQ_USER
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: RABBITMQ_PASS
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: equipment-02
+  namespace: machinery-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: equipment-02
+  template:
+    metadata:
+      labels:
+        app: equipment-02
+    spec:
+      containers:
+        - name: equipment-service
+          image: 130585887042.dkr.ecr.us-west-2.amazonaws.com/equipment-service:latest
+          env:
+            - name: EQUIPMENT_ID
+              value: machine-02
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: RABBITMQ_USER
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: RABBITMQ_PASS
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: equipment-03
+  namespace: machinery-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: equipment-03
+  template:
+    metadata:
+      labels:
+        app: equipment-03
+    spec:
+      containers:
+        - name: equipment-service
+          image: 130585887042.dkr.ecr.us-west-2.amazonaws.com/equipment-service:latest
+          env:
+            - name: EQUIPMENT_ID
+              value: machine-03
+            - name: RABBITMQ_HOST
+              value: rabbitmq
+            - name: RABBITMQ_USER
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: RABBITMQ_USER
+            - name: RABBITMQ_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: RABBITMQ_PASS
