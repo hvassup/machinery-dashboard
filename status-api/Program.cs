@@ -64,7 +64,8 @@ using (var scope = app.Services.CreateScope())
 
     foreach (var config in machineConfigs)
     {
-        if (!db.Machines.Any(m => m.Id == config.Id))
+        var machine = db.Machines.FirstOrDefault(m => m.Id == config.Id);
+        if (machine is null)
         {
             db.Machines.Add(new Machine
             {
@@ -73,6 +74,10 @@ using (var scope = app.Services.CreateScope())
                 Status = "Idle",
                 LastSeen = DateTime.UtcNow
             });
+        }
+        else
+        {
+            machine.Name = config.Name;
         }
     }
     db.SaveChanges();
