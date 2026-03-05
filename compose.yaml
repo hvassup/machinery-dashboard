@@ -32,6 +32,7 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: '${RABBITMQ_USER:-guest}'
       RABBITMQ_PASS: '${RABBITMQ_PASS:-guest}'
+      ProcessingDelaySeconds: '${MACHINE_0_PROCESSING_SECONDS:-5}'
     depends_on: [rabbitmq]
 
   equipment-02:
@@ -44,6 +45,7 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: '${RABBITMQ_USER:-guest}'
       RABBITMQ_PASS: '${RABBITMQ_PASS:-guest}'
+      ProcessingDelaySeconds: '${MACHINE_1_PROCESSING_SECONDS:-5}'
     depends_on: [rabbitmq]
 
   equipment-03:
@@ -56,6 +58,7 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: '${RABBITMQ_USER:-guest}'
       RABBITMQ_PASS: '${RABBITMQ_PASS:-guest}'
+      ProcessingDelaySeconds: '${MACHINE_2_PROCESSING_SECONDS:-5}'
     depends_on: [rabbitmq]
 
   status-api:
@@ -75,6 +78,12 @@ services:
       Vapid__Subject: '${VAPID_SUBJECT}'
       Vapid__PublicKey: '${VAPID_PUBLIC_KEY}'
       Vapid__PrivateKey: '${VAPID_PRIVATE_KEY}'
+      Machines__0__Id: '${MACHINE_0_ID:-machine-01}'
+      Machines__0__Name: '${MACHINE_0_NAME:-Machine 01}'
+      Machines__1__Id: '${MACHINE_1_ID:-machine-02}'
+      Machines__1__Name: '${MACHINE_1_NAME:-Machine 02}'
+      Machines__2__Id: '${MACHINE_2_ID:-machine-03}'
+      Machines__2__Name: '${MACHINE_2_NAME:-Machine 03}'
     depends_on: [rabbitmq, postgres]
 
 volumes:

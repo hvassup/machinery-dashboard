@@ -1,4 +1,5 @@
 using MassTransit;
+using status_api.Models;
 using Microsoft.EntityFrameworkCore;
 using status_api.Consumers;
 using status_api.Data;
@@ -53,17 +54,21 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 
-    var machineIds = builder.Configuration.GetSection("Machines").Get<string[]>()
-        ?? ["machine-01", "machine-02", "machine-03"];
+    var machineConfigs = builder.Configuration.GetSection("Machines").Get<MachineConfig[]>()
+        ?? [
+            new MachineConfig { Id = "machine-01", Name = "Machine 01" },
+            new MachineConfig { Id = "machine-02", Name = "Machine 02" },
+            new MachineConfig { Id = "machine-03", Name = "Machine 03" }
+        ];
 
-    foreach (var id in machineIds)
+    foreach (var config in machineConfigs)
     {
-        if (!db.Machines.Any(m => m.Id == id))
+        if (!db.Machines.Any(m => m.Id == config.Id))
         {
             db.Machines.Add(new status_api.Models.Machine
             {
-                Id = id,
-                Name = id.Replace("-", " ").ToUpperInvariant(),
+                Id = config.Id,
+                Name = config.Name,
                 Status = "Idle",
                 LastSeen = DateTime.UtcNow
             });

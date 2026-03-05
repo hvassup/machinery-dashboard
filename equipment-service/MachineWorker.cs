@@ -18,13 +18,10 @@ public class MachineWorker(
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        var tickMs         = config.GetValue<int>("TickIntervalMs", 500);
-        var warmUpSeconds  = config.GetValue<int>("WarmUpDurationSeconds", 10);
-        var coolDownSeconds= config.GetValue<int>("CoolDownDurationSeconds", 5);
         var processingSeconds = config.GetValue<int>("ProcessingDelaySeconds", 5);
 
-        double warmUpStep   = 100.0 / (warmUpSeconds  * 1000.0 / tickMs);
-        double coolDownStep = 100.0 / (coolDownSeconds * 1000.0 / tickMs);
+        double warmUpStep = 10;
+        double coolDownStep = 10;
 
         var pending = new Queue<BeginProcessOrderCommand>();
         double pct = 0;
@@ -47,7 +44,6 @@ public class MachineWorker(
                         break;
 
                     case State.WarmingUp:
-                        await Task.Delay(tickMs, ct);
                         Drain(pending);
                         pct = Math.Min(100, pct + warmUpStep);
                         await Publish(new WarmUpProgressEvent { MachineId = _machineId, Percentage = (int)Math.Round(pct) });
@@ -60,7 +56,7 @@ public class MachineWorker(
 
                         var order = pending.Dequeue();
                         await Publish(new BeginningOrderEvent { MachineId = _machineId, OrderId = order.OrderId });
-                        await Task.Delay(TimeSpan.FromSeconds(processingSeconds), ct);
+                        await Task.Delay(TimeSpan.FromSeconds(processingSeconds), ct); // Equipment is processing the order
                         await Publish(new FinishedOrderEvent  { MachineId = _machineId, OrderId = order.OrderId });
                         break;
 
@@ -68,7 +64,6 @@ public class MachineWorker(
                         Drain(pending);
                         if (pending.Count > 0) { state = State.WarmingUp; break; }
 
-                        await Task.Delay(tickMs, ct);
                         pct = Math.Max(0, pct - coolDownStep);
                         await Publish(new CoolDownProgressEvent { MachineId = _machineId, Percentage = (int)Math.Round(pct) });
                         if (pct <= 0) state = State.Cold;
