@@ -1,16 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using status_api.Data;
 using status_api.Models;
+using status_api.Options;
 
 namespace status_api.Controllers;
 
 [ApiController]
 [Route("push")]
-public class PushController(AppDbContext db, IConfiguration config) : ControllerBase
+public class PushController(AppDbContext db, IOptions<VapidOptions> vapidOptions) : ControllerBase
 {
     [HttpGet("vapid-public-key")]
     public IActionResult GetPublicKey() =>
-        Ok(new { publicKey = config["Vapid:PublicKey"] });
+        Ok(new { publicKey = vapidOptions.Value.PublicKey });
 
     [HttpPost("subscribe")]
     public async Task<IActionResult> Subscribe([FromBody] SubscribeRequest req)

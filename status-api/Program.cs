@@ -3,6 +3,7 @@ using status_api.Models;
 using Microsoft.EntityFrameworkCore;
 using status_api.Consumers;
 using status_api.Data;
+using status_api.Options;
 using status_api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__De
     ?? builder.Configuration.GetConnectionString("Default")
     ?? "Host=localhost;Database=machinery;Username=machinery;Password=machinery";
 
+builder.Services.Configure<VapidOptions>(builder.Configuration.GetSection("Vapid"));
 builder.Services.AddScoped<PushNotificationService>();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>

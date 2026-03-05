@@ -1,17 +1,17 @@
+using Microsoft.Extensions.Options;
 using status_api.Data;
+using status_api.Options;
 using WebPush;
 
 namespace status_api.Services;
 
-public class PushNotificationService(AppDbContext db, IConfiguration config, ILogger<PushNotificationService> logger)
+public class PushNotificationService(AppDbContext db, IOptions<VapidOptions> vapidOptions, ILogger<PushNotificationService> logger)
 {
     public async Task SendMachineStatusAsync(string machineId, string status)
     {
-        var publicKey = config["Vapid:PublicKey"];
-        var privateKey = config["Vapid:PrivateKey"];
-        var subject = config["Vapid:Subject"] ?? "mailto:admin@example.com";
+        var vapid = vapidOptions.Value;
 
-        if (string.IsNullOrEmpty(publicKey) || string.IsNullOrEmpty(privateKey))
+        if (string.IsNullOrEmpty(vapid.PublicKey) || string.IsNullOrEmpty(vapid.PrivateKey))
         {
             logger.LogWarning("VAPID keys not configured — skipping push notification");
             return;
@@ -21,7 +21,7 @@ public class PushNotificationService(AppDbContext db, IConfiguration config, ILo
         if (subscriptions.Count == 0) return;
 
         var client = new WebPushClient();
-        client.SetVapidDetails(subject, publicKey, privateKey);
+        client.SetVapidDetails(vapid.Subject, vapid.PublicKey, vapid.PrivateKey);
 
         var payload = System.Text.Json.JsonSerializer.Serialize(new
         {

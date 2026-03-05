@@ -1,14 +1,16 @@
 using System.Threading.Channels;
 using Contracts.Commands;
 using Contracts.Events;
+using equipment_service.Options;
 using MassTransit;
+using Microsoft.Extensions.Options;
 
 namespace equipment_service;
 
 public class MachineWorker(
     Channel<BeginProcessOrderCommand> orderChannel,
     IBus bus,
-    IConfiguration config,
+    IOptions<MachineWorkerOptions> options,
     ILogger<MachineWorker> logger) : BackgroundService
 {
     private enum State { Cold, WarmingUp, Processing, CoolingDown }
@@ -18,7 +20,7 @@ public class MachineWorker(
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        var processingSeconds = config.GetValue("ProcessingDelaySeconds", 5);
+        var processingSeconds = options.Value.ProcessingDelaySeconds;
 
         double warmUpStep   = 10;
         double coolDownStep = 10;
