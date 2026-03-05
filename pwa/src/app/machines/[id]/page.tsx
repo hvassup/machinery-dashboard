@@ -7,6 +7,13 @@ import type { MachineDetail } from "@/types";
 import StatusBadge from "@/components/StatusBadge";
 import Link from "next/link";
 
+function eventColor(eventType: string): string {
+  if (eventType === "Idle")                                return "bg-red-500";
+  if (eventType === "WarmingUp" || eventType === "CoolingDown") return "bg-yellow-400";
+  if (eventType === "BeginningOrder" || eventType === "FinishedOrder") return "bg-green-500";
+  return "bg-gray-400";
+}
+
 export default function MachineDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [machine, setMachine] = useState<MachineDetail | null>(null);
@@ -55,9 +62,10 @@ export default function MachineDetailPage() {
         )}
         {machine.history.map((evt, i) => (
           <div key={i} className="flex justify-between items-center px-4 py-2 text-sm">
-            <div>
+            <div className="flex items-center gap-2">
+              <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${eventColor(evt.eventType)}`} />
               <span className="font-medium">{evt.eventType}</span>
-              {evt.orderId && <span className="text-gray-500 ml-2 font-mono text-xs">{evt.orderId.slice(0, 8)}…</span>}
+              {evt.orderId && <span className="text-gray-500 font-mono text-xs">{evt.orderId.slice(0, 8)}…</span>}
             </div>
             <span className="text-gray-400">{new Date(evt.timestamp).toLocaleTimeString()}</span>
           </div>
