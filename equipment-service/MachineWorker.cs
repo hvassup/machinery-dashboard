@@ -82,6 +82,8 @@ public class MachineWorker(
                         }
                         break;
                 }
+                
+                await Task.Delay(TimeSpan.FromSeconds(1), ct); // Just to simulate some sort of tick speed
             }
             catch (OperationCanceledException) { break; }
             catch (Exception ex)
