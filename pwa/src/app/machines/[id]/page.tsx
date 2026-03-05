@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getMachine } from "@/lib/api";
-import type { MachineDetail } from "@/types";
+import type { MachineDetail, ScheduledOrder } from "@/types";
 import StatusBadge from "@/components/StatusBadge";
 import Link from "next/link";
 
@@ -48,6 +48,23 @@ export default function MachineDetailPage() {
         )}
         <p className="text-sm text-gray-400 mt-1">Last seen: {new Date(machine.lastSeen).toLocaleString()}</p>
       </div>
+
+      {machine.scheduledOrders.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Scheduled Orders</h2>
+          <div className="bg-white rounded-lg border divide-y">
+            {machine.scheduledOrders.map((o: ScheduledOrder) => (
+              <div key={o.orderId} className="flex justify-between items-center px-4 py-2 text-sm">
+                <div>
+                  <span className="font-medium">{o.productId}</span>
+                  <span className="text-gray-500 ml-2">×{o.quantity}</span>
+                </div>
+                <span className="text-gray-400">{new Date(o.scheduledAt).toLocaleTimeString()}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="flex justify-between items-center mb-3">
         <h2 className="text-lg font-semibold">Event History</h2>

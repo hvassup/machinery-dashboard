@@ -6,7 +6,15 @@ export interface Machine {
   currentOrderId: string | null;
 }
 
+export interface ScheduledOrder {
+  orderId: string;
+  productId: string;
+  quantity: number;
+  scheduledAt: string;
+}
+
 export interface MachineDetail extends Machine {
+  scheduledOrders: ScheduledOrder[];
   history: MachineEventRecord[];
 }
 

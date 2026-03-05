@@ -2,11 +2,10 @@ using Contracts.Events;
 using MassTransit;
 using status_api.Data;
 using status_api.Models;
-using status_api.Services;
 
 namespace status_api.Consumers;
 
-public class FinishedOrderEventConsumer(AppDbContext db, PushNotificationService push, ILogger<FinishedOrderEventConsumer> logger)
+public class FinishedOrderEventConsumer(AppDbContext db, ILogger<FinishedOrderEventConsumer> logger)
     : IConsumer<FinishedOrderEvent>
 {
     public async Task Consume(ConsumeContext<FinishedOrderEvent> context)
@@ -15,7 +14,6 @@ public class FinishedOrderEventConsumer(AppDbContext db, PushNotificationService
         var machine = await db.Machines.FindAsync(evt.MachineId);
         if (machine != null)
         {
-            machine.Status = "Ready";
             machine.LastSeen = evt.Timestamp;
             machine.CurrentOrderId = null;
         }

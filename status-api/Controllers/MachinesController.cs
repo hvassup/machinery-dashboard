@@ -8,7 +8,6 @@ using status_api.Models;
 
 namespace status_api.Controllers;
 
-//TODO Create DTOs for the responses in here
 [ApiController]
 public class MachinesController(AppDbContext db, ISendEndpointProvider sendEndpointProvider) : ControllerBase
 {
@@ -40,6 +39,12 @@ public class MachinesController(AppDbContext db, ISendEndpointProvider sendEndpo
             .Select(e => new { eventType = e.EventType, orderId = e.OrderId, timestamp = e.Timestamp })
             .ToListAsync();
 
+        var scheduledOrders = await db.OrderJobs
+            .Where(o => o.MachineId == id && o.Status == "Scheduled")
+            .OrderBy(o => o.ScheduledAt)
+            .Select(o => new { orderId = o.Id, productId = o.ProductId, quantity = o.Quantity, scheduledAt = o.ScheduledAt })
+            .ToListAsync();
+
         return Ok(new
         {
             machineId = machine.Id,
@@ -47,6 +52,7 @@ public class MachinesController(AppDbContext db, ISendEndpointProvider sendEndpo
             status = machine.Status,
             lastSeen = machine.LastSeen,
             currentOrderId = machine.CurrentOrderId,
+            scheduledOrders,
             history
         });
     }
