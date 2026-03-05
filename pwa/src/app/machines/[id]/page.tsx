@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getMachine } from "@/lib/api";
-import type { MachineDetail, ScheduledOrder } from "@/types";
+import type { MachineDetail, ScheduledOrder, HistoricalOrder } from "@/types";
 import StatusBadge from "@/components/StatusBadge";
 import Link from "next/link";
 
@@ -54,12 +54,34 @@ export default function MachineDetailPage() {
           <h2 className="text-lg font-semibold mb-3">Scheduled Orders</h2>
           <div className="bg-white rounded-lg border divide-y">
             {machine.scheduledOrders.map((o: ScheduledOrder) => (
-              <div key={o.orderId} className="flex justify-between items-center px-4 py-2 text-sm">
-                <div>
+              <div key={o.orderId} className="px-4 py-2 text-sm">
+                <div className="flex justify-between items-center">
                   <span className="font-medium">{o.productId}</span>
-                  <span className="text-gray-500 ml-2">×{o.quantity}</span>
+                  <span className="text-gray-500">×{o.quantity}</span>
                 </div>
-                <span className="text-gray-400">{new Date(o.scheduledAt).toLocaleTimeString()}</span>
+                <span className="font-mono text-xs text-gray-400">{o.orderId}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {machine.historicalOrders.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3">Completed Orders</h2>
+          <div className="bg-white rounded-lg border divide-y">
+            {machine.historicalOrders.map((o: HistoricalOrder) => (
+              <div key={o.orderId} className="px-4 py-2 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">{o.productId}</span>
+                  <span className="text-gray-500">×{o.quantity}</span>
+                </div>
+                <div className="flex justify-between mt-0.5">
+                  <span className="font-mono text-xs text-gray-400">{o.orderId}</span>
+                  {o.finishedAt && (
+                    <span className="text-xs text-gray-400">{new Date(o.finishedAt).toLocaleTimeString()}</span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -82,7 +104,7 @@ export default function MachineDetailPage() {
             <div className="flex items-center gap-2">
               <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${eventColor(evt.eventType)}`} />
               <span className="font-medium">{evt.eventType}</span>
-              {evt.orderId && <span className="text-gray-500 font-mono text-xs">{evt.orderId.slice(0, 8)}…</span>}
+              {evt.orderId && <span className="text-gray-500 font-mono text-xs">{evt.orderId}</span>}
             </div>
             <span className="text-gray-400">{new Date(evt.timestamp).toLocaleTimeString()}</span>
           </div>

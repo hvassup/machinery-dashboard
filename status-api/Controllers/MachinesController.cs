@@ -45,6 +45,13 @@ public class MachinesController(AppDbContext db, ISendEndpointProvider sendEndpo
             .Select(o => new { orderId = o.Id, productId = o.ProductId, quantity = o.Quantity, scheduledAt = o.ScheduledAt })
             .ToListAsync();
 
+        var historicalOrders = await db.OrderJobs
+            .Where(o => o.MachineId == id && o.Status == "Finished")
+            .OrderByDescending(o => o.FinishedAt)
+            .Take(20)
+            .Select(o => new { orderId = o.Id, productId = o.ProductId, quantity = o.Quantity, startedAt = o.StartedAt, finishedAt = o.FinishedAt })
+            .ToListAsync();
+
         return Ok(new
         {
             machineId = machine.Id,
@@ -53,6 +60,7 @@ public class MachinesController(AppDbContext db, ISendEndpointProvider sendEndpo
             lastSeen = machine.LastSeen,
             currentOrderId = machine.CurrentOrderId,
             scheduledOrders,
+            historicalOrders,
             history
         });
     }

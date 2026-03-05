@@ -13,8 +13,17 @@ export interface ScheduledOrder {
   scheduledAt: string;
 }
 
+export interface HistoricalOrder {
+  orderId: string;
+  productId: string;
+  quantity: number;
+  startedAt: string | null;
+  finishedAt: string | null;
+}
+
 export interface MachineDetail extends Machine {
   scheduledOrders: ScheduledOrder[];
+  historicalOrders: HistoricalOrder[];
   history: MachineEventRecord[];
 }
 
