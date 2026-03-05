@@ -21,7 +21,6 @@ public class MachinesController(AppDbContext db, ISendEndpointProvider sendEndpo
             machineId = m.Id,
             name = m.Name,
             status = m.Status,
-            warmUpPercentage = m.WarmUpPercentage,
             lastSeen = m.LastSeen,
             currentOrderId = m.CurrentOrderId
         });
@@ -46,7 +45,6 @@ public class MachinesController(AppDbContext db, ISendEndpointProvider sendEndpo
             machineId = machine.Id,
             name = machine.Name,
             status = machine.Status,
-            warmUpPercentage = machine.WarmUpPercentage,
             lastSeen = machine.LastSeen,
             currentOrderId = machine.CurrentOrderId,
             history

@@ -22,8 +22,9 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<WarmUpProgressEventConsumer>();
-    x.AddConsumer<CoolDownProgressEventConsumer>();
+    x.AddConsumer<MachineWarmingUpEventConsumer>();
+    x.AddConsumer<MachineCoolingDownEventConsumer>();
+    x.AddConsumer<MachineIdleEventConsumer>();
     x.AddConsumer<BeginningOrderEventConsumer>();
     x.AddConsumer<FinishedOrderEventConsumer>();
 
@@ -65,7 +66,7 @@ using (var scope = app.Services.CreateScope())
     {
         if (!db.Machines.Any(m => m.Id == config.Id))
         {
-            db.Machines.Add(new status_api.Models.Machine
+            db.Machines.Add(new Machine
             {
                 Id = config.Id,
                 Name = config.Name,

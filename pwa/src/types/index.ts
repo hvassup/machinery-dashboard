@@ -1,8 +1,7 @@
 export interface Machine {
   machineId: string;
   name: string;
-  status: "Idle" | "WarmingUp" | "Ready" | "Processing" | "CoolingDown" | string;
-  warmUpPercentage: number;
+  status: "Idle" | "WarmingUp" | "Processing" | "CoolingDown" | string;
   lastSeen: string;
   currentOrderId: string | null;
 }

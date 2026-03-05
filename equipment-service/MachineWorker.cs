@@ -18,9 +18,9 @@ public class MachineWorker(
 
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
-        var processingSeconds = config.GetValue<int>("ProcessingDelaySeconds", 5);
+        var processingSeconds = config.GetValue("ProcessingDelaySeconds", 5);
 
-        double warmUpStep = 10;
+        double warmUpStep   = 10;
         double coolDownStep = 10;
 
         var pending = new Queue<BeginProcessOrderCommand>();
@@ -40,33 +40,46 @@ public class MachineWorker(
                         pending.Enqueue(first);
                         pct = 0;
                         state = State.WarmingUp;
-                        await Publish(new WarmUpProgressEvent { MachineId = _machineId, Percentage = 0 });
+                        await Publish(new MachineWarmingUpEvent { MachineId = _machineId });
                         break;
 
                     case State.WarmingUp:
                         Drain(pending);
                         pct = Math.Min(100, pct + warmUpStep);
-                        await Publish(new WarmUpProgressEvent { MachineId = _machineId, Percentage = (int)Math.Round(pct) });
-                        if (pct >= 100) state = State.Processing;
+                        if (pct >= 100)
+                            state = State.Processing;
                         break;
 
                     case State.Processing:
                         Drain(pending);
-                        if (pending.Count == 0) { state = State.CoolingDown; break; }
+                        if (pending.Count == 0)
+                        {
+                            state = State.CoolingDown;
+                            await Publish(new MachineCoolingDownEvent { MachineId = _machineId });
+                            break;
+                        }
 
                         var order = pending.Dequeue();
                         await Publish(new BeginningOrderEvent { MachineId = _machineId, OrderId = order.OrderId });
-                        await Task.Delay(TimeSpan.FromSeconds(processingSeconds), ct); // Equipment is processing the order
+                        await Task.Delay(TimeSpan.FromSeconds(processingSeconds), ct);
                         await Publish(new FinishedOrderEvent  { MachineId = _machineId, OrderId = order.OrderId });
                         break;
 
                     case State.CoolingDown:
                         Drain(pending);
-                        if (pending.Count > 0) { state = State.WarmingUp; break; }
+                        if (pending.Count > 0)
+                        {
+                            state = State.WarmingUp;
+                            await Publish(new MachineWarmingUpEvent { MachineId = _machineId });
+                            break;
+                        }
 
                         pct = Math.Max(0, pct - coolDownStep);
-                        await Publish(new CoolDownProgressEvent { MachineId = _machineId, Percentage = (int)Math.Round(pct) });
-                        if (pct <= 0) state = State.Cold;
+                        if (pct <= 0)
+                        {
+                            state = State.Cold;
+                            await Publish(new MachineIdleEvent { MachineId = _machineId });
+                        }
                         break;
                 }
             }

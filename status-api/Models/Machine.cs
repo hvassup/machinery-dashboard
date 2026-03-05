@@ -7,5 +7,4 @@ public class Machine
     public string Status { get; set; } = "Idle";
     public DateTime LastSeen { get; set; } = DateTime.UtcNow;
     public string? CurrentOrderId { get; set; }
-    public int WarmUpPercentage { get; set; }
 }

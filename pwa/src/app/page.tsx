@@ -38,22 +38,6 @@ export default function DashboardPage() {
               {m.currentOrderId && (
                 <p className="text-xs text-gray-500 mt-1">Order: {m.currentOrderId}</p>
               )}
-              {m.status !== "Idle" && (
-                <div className="mt-2">
-                  <div className="flex justify-between text-xs text-gray-500 mb-0.5">
-                    <span>{m.status === "CoolingDown" ? "Cool-down" : "Warm-up"}</span>
-                    <span>{m.warmUpPercentage}%</span>
-                  </div>
-                  <div className="w-full bg-gray-100 rounded-full h-1.5">
-                    <div
-                      className={`h-1.5 rounded-full transition-all ${
-                        m.status === "CoolingDown" ? "bg-yellow-400" : "bg-green-400"
-                      }`}
-                      style={{ width: `${m.warmUpPercentage}%` }}
-                    />
-                  </div>
-                </div>
-              )}
               <p className="text-xs text-gray-400 mt-1">
                 Last seen: {new Date(m.lastSeen).toLocaleTimeString()}
               </p>
