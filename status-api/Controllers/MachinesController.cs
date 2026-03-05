@@ -15,7 +15,7 @@ public class MachinesController(AppDbContext db, ISendEndpointProvider sendEndpo
     [HttpGet("machines")]
     public async Task<IActionResult> GetMachines()
     {
-        var machines = await db.Machines.ToListAsync();
+        var machines = await db.Machines.OrderBy(m => m.Name).ToListAsync();
         var result = machines.Select(m => new
         {
             machineId = m.Id,

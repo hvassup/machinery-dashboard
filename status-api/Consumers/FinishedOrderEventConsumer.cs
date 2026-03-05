@@ -36,7 +36,6 @@ public class FinishedOrderEventConsumer(AppDbContext db, PushNotificationService
         });
 
         await db.SaveChangesAsync();
-        await push.SendMachineStatusAsync(evt.MachineId, "Ready");
         logger.LogInformation("Machine {MachineId} finished order {OrderId}", evt.MachineId, evt.OrderId);
     }
 }
