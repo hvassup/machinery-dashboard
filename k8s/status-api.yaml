@@ -55,6 +55,36 @@ spec:
                 secretKeyRef:
                   name: machinery-secrets
                   key: VAPID_PRIVATE_KEY
+            - name: Machines__0__Id
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: MACHINE_0_ID
+            - name: Machines__0__Name
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: MACHINE_0_NAME
+            - name: Machines__1__Id
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: MACHINE_1_ID
+            - name: Machines__1__Name
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: MACHINE_1_NAME
+            - name: Machines__2__Id
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: MACHINE_2_ID
+            - name: Machines__2__Name
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: MACHINE_2_NAME
 ---
 apiVersion: v1
 kind: Service

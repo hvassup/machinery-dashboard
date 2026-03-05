@@ -31,6 +31,11 @@ spec:
                 secretKeyRef:
                   name: machinery-secrets
                   key: RABBITMQ_PASS
+            - name: ProcessingDelaySeconds
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: MACHINE_0_PROCESSING_SECONDS
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -65,6 +70,11 @@ spec:
                 secretKeyRef:
                   name: machinery-secrets
                   key: RABBITMQ_PASS
+            - name: ProcessingDelaySeconds
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: MACHINE_1_PROCESSING_SECONDS
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -99,3 +109,8 @@ spec:
                 secretKeyRef:
                   name: machinery-secrets
                   key: RABBITMQ_PASS
+            - name: ProcessingDelaySeconds
+              valueFrom:
+                secretKeyRef:
+                  name: machinery-secrets
+                  key: MACHINE_2_PROCESSING_SECONDS
